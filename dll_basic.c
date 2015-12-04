@@ -1,5 +1,6 @@
 #include "dll_basic.h"
 
+
  /* THIS FILE PROVIDES A MINIMAL RELIABLE DATALINK LAYER.  IT AVOIDS ANY
     FRAME LOSS AND CORRUPTION AT THE PHYSICAL LAYER BY CALLING
     CNET_write_physical_reliable() INSTEAD OF CNET_write_physical().
@@ -19,7 +20,10 @@ int down_to_datalink(int link, char *packet, size_t length)
 {
     // remove write_physical_reliable does not allow corruption.
     // We remove it to allow corruption.
-    CHECK(CNET_write_physical(link, (char *)packet, &length));
+    if (CNET_write_physical(link, (char *)packet, &length) < 0) {
+        if (cnet_errno == ER_TOOBUSY) count_toobusy++;
+        else CNET_exit(__FILE__, __func__, __LINE__);
+    }
     return(0);
 }
 
@@ -44,6 +48,7 @@ static EVENT_HANDLER(up_to_datalink)
 
 void reboot_DLL(void)
 {
+    count_toobusy = 0;
     CHECK(CNET_set_handler(EV_PHYSICALREADY,	up_to_datalink, 0));
     /* NOTHING ELSE TO DO! */
 }

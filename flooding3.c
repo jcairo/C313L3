@@ -50,16 +50,20 @@ typedef struct {
  */
 static void flood3(char *packet, size_t length, int choose_link, int avoid_link)
 {
+    // If the parameter choose_link is provided use it and send the packet.
 /*  REQUIRED LINK IS PROVIDED - USE IT */
     if(choose_link != 0)
 	CHECK(down_to_datalink(choose_link, packet, length));
 
+    // if the outlink isn't provided find the link with minimum hops.
 /*  OTHERWISE, CHOOSE THE BEST KNOWN LINKS, AVOIDING ANY SPECIFIED ONE */
     else {
 	NL_PACKET	*p = (NL_PACKET *)packet;
 	int		links_wanted = NL_linksofminhops(p->dest);
 	int		link;
 
+        // All this does it send out on appropriate link while making sure to avoid
+        // links any avoid link links.
 	for(link=1 ; link<=nodeinfo.nlinks ; ++link) {
 	    if(link == avoid_link)		/* possibly avoid this one */
 		continue;

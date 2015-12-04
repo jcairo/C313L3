@@ -1,6 +1,6 @@
 #
-#set term gif
-#set output "out.gif"
+set term gif
+set output "out.gif"
 set title "Comparison of 3 flooding protocols"
 set xlabel "Running time (seconds)"
 set ylabel "Delivery efficiency (%)"
@@ -14,4 +14,4 @@ plot	\
 	"result.floodQ33"		title "flooding2 max hops = 3" with linespoints, \
 	"result.floodQ34"		title "flooding4 max hops = 4" with linespoints, \
 #
-pause -1
+#pause -1
